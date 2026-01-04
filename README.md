@@ -146,6 +146,49 @@ Enable in `.env`:
 ENABLED_NOTIFIERS=line,email
 ```
 
+### Creating Custom Notifier
+
+Create a file named `*_notifier.py` under `automation/notification/notifiers/`:
+
+```python
+# automation/notification/notifiers/slack_notifier.py
+from automation.base import ExecutionResult
+from automation.config import config
+
+from .base_notifier import BaseNotifier
+
+
+class SlackNotifier(BaseNotifier):
+    """Slack notifier."""
+
+    def __init__(self):
+        super().__init__()
+        self.webhook_url = "..."  # Add to config
+
+    def is_enabled(self) -> bool:
+        return "slack" in config.notification.ENABLED_NOTIFIERS
+
+    def send_notification(self, result: ExecutionResult) -> bool:
+        if not self.is_enabled():
+            return False
+
+        message = (
+            self.format_success_message(result)
+            if result.success
+            else self.format_error_message(result)
+        )
+        # Send via webhook...
+        return True
+```
+
+Key points:
+- File must be named `*_notifier.py` for auto-discovery
+- Class auto-registers via `__init_subclass__`
+- Implement `is_enabled()` and `send_notification()`
+- Optional: Override `format_success_message()` / `format_error_message()`
+
+See existing implementation: **[automation/notification/notifiers/line_notifier.py](automation/notification/notifiers/line_notifier.py)**
+
 ## Development
 
 ```bash
