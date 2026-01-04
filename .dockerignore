@@ -1,0 +1,59 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.egg-info/
+dist/
+build/
+
+# 虛擬環境（重要：本地虛擬環境不應複製到 Docker）
+.venv/
+venv/
+ENV/
+env/
+
+# 測試和覆蓋率
+.pytest_cache/
+.coverage
+htmlcov/
+*.cover
+
+# 開發工具
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Git
+.git/
+.gitignore
+.gitattributes
+
+# 文件
+*.md
+!README.md
+LICENSE
+
+# 環境變數（不要打包進 image）
+.env
+.env.*
+
+# 憑證（透過 volume 掛載）
+credentials/
+
+# 暫存和日誌（透過 volume 掛載）
+tmp/
+downloads/
+exports/
+logs/
+
+# 測試檔案
+tests/
+*.test.py
+
+# 其他
+.DS_Store
+Thumbs.db

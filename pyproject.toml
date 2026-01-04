@@ -1,0 +1,109 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "stagehand-automation-template"
+version = "0.1.0"
+description = "Stagehand Web Automation Template"
+requires-python = ">=3.11"
+dependencies = [
+    "anthropic>=0.40.0",
+    "google-generativeai>=0.8.5",
+    "line-bot-sdk>=3.21.0",
+    "pillow>=12.0.0",
+    "python-dotenv>=1.2.1",
+    "stagehand>=0.5.5",
+]
+
+[dependency-groups]
+dev = [
+    "pytest>=7.4.0",
+    "pytest-asyncio>=0.21.0",
+    "pytest-cov>=4.1.0",
+    "pytest-mock>=3.11.1",
+    "ruff>=0.14.9",
+]
+
+[project.scripts]
+stagehand-automation = "automation.app:main"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["automation*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+asyncio_mode = "auto"
+pythonpath = ["."]
+addopts = [
+    "--cov=automation",
+    "--cov-report=html",
+    "--cov-report=term-missing",
+    "-v",
+]
+
+[tool.ruff]
+target-version = "py311"
+
+line-length = 88
+
+# 排除的目錄
+exclude = [
+    ".git",
+    ".venv",
+    "__pycache__",
+    "*.egg-info",
+    "tmp",
+    "downloads",
+    "exports",
+    "logs",
+    "htmlcov",
+    ".pytest_cache",
+    "tests",
+]
+
+[tool.ruff.lint]
+# 啟用的規則（遵循 PEP 8 標準）
+select = [
+    "E",      # pycodestyle errors
+    "W",      # pycodestyle warnings
+    "F",      # pyflakes
+    "I",      # isort (import 排序)
+    "N",      # pep8-naming (命名規範)
+    "UP",     # pyupgrade
+    "B",      # flake8-bugbear (常見錯誤)
+    "C4",     # flake8-comprehensions (列表推導式)
+    "SIM",    # flake8-simplify (程式碼簡化)
+    "RET",    # flake8-return (return 語句)
+    "ARG",    # flake8-unused-arguments (未使用的參數)
+    "PTH",    # flake8-use-pathlib (使用 pathlib)
+    "PL",     # pylint
+    "PERF",   # perflint (效能)
+]
+
+# 忽略的規則
+ignore = [
+    "PLR2004",
+]
+[tool.ruff.lint.per-file-ignores]
+"tests/**/*.py" = ["PLC0415"]
+
+[tool.ruff.lint.mccabe]
+max-complexity = 10
+
+[tool.ruff.lint.isort]
+force-to-top = []
+known-first-party = ["automation"]
+section-order = ["future", "standard-library", "third-party", "first-party", "local-folder"]
+lines-after-imports = 2
+
+[tool.ruff.lint.pydocstyle]
+convention = "google"
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+line-ending = "auto"
+skip-magic-trailing-comma = false
+docstring-code-format = true
