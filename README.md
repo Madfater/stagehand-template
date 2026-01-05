@@ -29,7 +29,6 @@ cp .env.example .env
 ```
 
 Required environment variables:
-- `LOGIN_ACCOUNT` / `LOGIN_PASSWORD`: Target system login credentials
 - `MODEL_PROVIDER` / `MODEL_NAME` / `MODEL_API_KEY`: LLM settings
 
 ### Run Task
@@ -135,7 +134,6 @@ automation/
 ```python
 from automation.config import config
 
-account = config.login.ACCOUNT
 api_key = config.llm.MODEL_API_KEY
 ```
 
