@@ -19,6 +19,15 @@ class LLMConfig:
     MODEL_API_KEY: str = os.getenv("MODEL_API_KEY")
 
 
+
+@dataclass
+class LoginConfig:
+    """Login configuration."""
+
+    ACCOUNT: str = os.getenv("LOGIN_ACCOUNT", "")
+    PASSWORD: str = os.getenv("LOGIN_PASSWORD", "")
+
+
 @dataclass
 class LineConfig:
     """LINE Bot configuration."""
@@ -137,6 +146,7 @@ class Config:
     """Unified configuration entry point."""
 
     llm: LLMConfig = field(default_factory=LLMConfig)
+    login: LoginConfig = field(default_factory=LoginConfig)
     line: LineConfig = field(default_factory=LineConfig)
     notification: NotificationConfig = field(default_factory=NotificationConfig)
     email: EmailConfig = field(default_factory=EmailConfig)

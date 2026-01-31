@@ -43,7 +43,7 @@ async def main() -> int:
         success = await app.run_automation(args.task)
         return 0 if success else 1
     except Exception as e:
-        logger.error(f"Error occurred while executing task: {e}")
+        logger.error(f"Error occurred while executing task: {e}", exc_info=True)
         return 1
 
 

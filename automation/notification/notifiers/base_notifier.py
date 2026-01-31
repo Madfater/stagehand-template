@@ -101,6 +101,10 @@ class BaseNotifier(ABC):
         """
         Format an error message (default implementation, can be overridden).
 
+        When result.error_info is available, displays structured error information
+        including error code, error type, location, etc.
+        Backward compatible: falls back to error_message when error_info is None.
+
         Args:
             result: The task execution result.
 
@@ -111,8 +115,33 @@ class BaseNotifier(ABC):
             f"{result.task_name} execution failed",
             f"Start time: {result.start_time.strftime('%Y/%m/%d %I:%M%p')}",
             "",
-            f"Error message: {result.error_message or 'Unknown error'}",
         ]
+
+        if result.error_info is not None:
+            info = result.error_info
+
+            if info.error_code:
+                lines.append(f"Error code: {info.error_code}")
+
+            if info.error_type:
+                lines.append(f"Error type: {info.error_type}")
+
+            lines.append(f"Error message: {info.message}")
+
+            if info.location:
+                lines.append(f"Location: {info.location}")
+
+            if info.context.get("errno") is not None:
+                lines.append(f"OS errno: {info.context['errno']}")
+            if info.context.get("filename"):
+                lines.append(f"File: {info.context['filename']}")
+
+            retry_history = info.context.get("retry_history")
+            if retry_history:
+                lines.append(f"Retry count: {len(retry_history)}")
+
+        else:
+            lines.append(f"Error message: {result.error_message or 'Unknown error'}")
 
         if result.get_execution_time() > 0:
             lines.append("")

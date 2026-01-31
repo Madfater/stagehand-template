@@ -87,9 +87,10 @@ class BaseAutomation(ABC):
             await self.__init_stagehand()
             await self.automation()
         except Exception as e:
-            self.logger.info(f"Error occurred during task execution: {str(e)}")
-            self.execution_result.success = False
-            self.execution_result.error_message = str(e)
+            self.logger.error(
+                f"Error occurred during task execution: {str(e)}", exc_info=True
+            )
+            self.execution_result.set_error(e)
         finally:
             self.logger.info("Task execution completed")
             self.execution_result.end_time = datetime.now()

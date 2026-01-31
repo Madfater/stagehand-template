@@ -4,6 +4,7 @@ from typing import Any
 
 from stagehand import StagehandPage
 
+from ..exceptions import StagehandAutomationError
 from ..logging_config import get_logger
 
 
@@ -39,6 +40,7 @@ class BaseTask(ABC):
         self.retry_delay = retry_delay
         self.retry_on_exceptions = retry_on_exceptions
         self.execution_stats: dict[str, Any] = {}
+        self.retry_history: list[dict[str, Any]] = []
 
     def get_execution_stats(self) -> dict[str, Any]:
         """
@@ -90,18 +92,32 @@ class BaseTask(ABC):
             except Exception as e:
                 last_exception = e
 
+                self.retry_history.append(
+                    {
+                        "attempt": attempt,
+                        "error_type": type(e).__qualname__,
+                        "error_message": str(e),
+                    }
+                )
+
                 if not self.should_retry(e):
                     raise
 
-                self.logger.error(f"Attempt {attempt} failed: {e}")
+                self.logger.error(f"Attempt {attempt} failed: {e}", exc_info=True)
 
                 if attempt == self.max_retries:
                     self.logger.error(
-                        f"Task failed: maximum retries ({self.max_retries}) reached"
+                        f"Task failed: maximum retries ({self.max_retries}) reached",
+                        exc_info=True,
                     )
                     break
                 self.logger.info(f"Waiting {self.retry_delay} seconds before retry...")
                 await asyncio.sleep(self.retry_delay)
 
         if last_exception:
+            self.execution_stats["retry_history"] = self.retry_history
+
+            if isinstance(last_exception, StagehandAutomationError):
+                last_exception.context["retry_history"] = self.retry_history
+
             raise last_exception

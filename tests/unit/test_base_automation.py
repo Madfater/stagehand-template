@@ -75,6 +75,10 @@ class TestBaseAutomation:
 
             assert result.success is False
             assert "Test error" in result.error_message
+            assert result.error_info is not None
+            assert result.error_info.error_type == "ValueError"
+            assert result.error_info.message == "Test error"
+            assert result.error_info.error_code is None
             # Stagehand should be properly closed even on error
             mock_stagehand.close.assert_called_once()
 
